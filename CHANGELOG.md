@@ -1,3 +1,12 @@
+## [2.0.3](https://github.com/hei-school/poja-cli/compare/v2.0.2...v2.0.3) (2023-11-08)
+
+
+### Bug Fixes
+
+* with_postgres is a string in cli ([1d831a1](https://github.com/hei-school/poja-cli/commit/1d831a131270d509a4a10cf453e47c4bf2b07243))
+
+
+
 ## [2.0.2](https://github.com/hei-school/poja-cli/compare/v2.0.1...v2.0.2) (2023-11-08)
 
 
