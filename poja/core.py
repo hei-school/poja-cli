@@ -11,6 +11,7 @@ GIT_TAG_OR_COMMIT = "452074c"
 
 DEFAULT_GROUP_NAME = "school.hei"
 DEFAULT_PACKAGE_FULL_NAME = DEFAULT_GROUP_NAME + ".poja"
+DEFAULT_MINIMUM_JACOCO_TEST_COVERAGE = 0.8
 
 
 def gen(
@@ -24,6 +25,7 @@ def gen(
     custom_java_env_vars=None,
     with_postgres="true",
     output_dir=None,
+    minimum_jacoco_test_coverage=DEFAULT_MINIMUM_JACOCO_TEST_COVERAGE,
 ):
     if output_dir is None:
         output_dir = app_name
@@ -69,6 +71,8 @@ def gen(
     set_postgres(with_postgres, temp_dir, exclude)
     print_normal("app_name")
     sed.find_replace(temp_dir, "<?app-name>", app_name, exclude)
+    print_normal("minimum_jacoco_test_coverage")
+    sed.find_replace(temp_dir, "<?minimum-jacoco_test_coverage>", minimum_jacoco_test_coverage, exclude)
 
     print_title("Save conf...")
     save_conf(
@@ -82,6 +86,7 @@ def gen(
         java_deps,
         java_env_vars,
         with_postgres,
+        minimum_jacoco_test_coverage
     )
     print_normal("poja.yml")
 
@@ -116,6 +121,7 @@ def save_conf(
     custom_java_deps,
     custom_java_env_vars,
     with_postgres,
+    minimum_jacoco_test_coverage,
 ):
     custom_java_deps_filename = "poja-custom-java-deps.txt"
     custom_java_env_vars_filename = "poja-custom-java-env-vars.txt"
@@ -130,6 +136,7 @@ def save_conf(
         "custom_java_deps": custom_java_deps_filename,
         "custom_java_env_vars": custom_java_env_vars_filename,
         "with_postgres": with_postgres,
+        "minimum_jacoco_test_coverage": minimum_jacoco_test_coverage
     }
     with open(temp_dir + "/poja.yml", "w") as conf_file:
         yaml.dump(conf, conf_file)
