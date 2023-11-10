@@ -2,6 +2,7 @@ app_name: poja-base
 cli_version: 2.1.0
 custom_java_deps: poja-custom-java-deps.txt
 custom_java_env_vars: poja-custom-java-env-vars.txt
+jacoco-min-coverage: '0.9'
 package_full_name: com.company.base
 region: eu-west-3
 ssm_sg_id: /poja/sg/id
