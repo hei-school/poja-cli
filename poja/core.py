@@ -24,7 +24,7 @@ def gen(
     custom_java_env_vars=None,
     with_postgres="true",
     output_dir=None,
-    jacoco_min_coverage=0.8,
+    jacoco_min_coverage="0.8",
 ):
     if output_dir is None:
         output_dir = app_name
@@ -71,7 +71,7 @@ def gen(
     print_normal("app_name")
     sed.find_replace(temp_dir, "<?app-name>", app_name, exclude)
     print_normal("jacoco_min_coverage")
-    sed.find_replace(temp_dir, "<?jacoco-min-coverage>", jacoco_min_coverage, exclude)
+    sed.find_replace(temp_dir, "<?jacoco-min-coverage>", jacoco_min_coverage + "", exclude)
 
     print_title("Save conf...")
     save_conf(
