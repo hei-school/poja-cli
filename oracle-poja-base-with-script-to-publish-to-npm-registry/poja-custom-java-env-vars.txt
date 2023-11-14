@@ -1,0 +1,2 @@
+SENTRY_DSN: !Sub '{{resolve:ssm:/hei-admin-api/sentry/dsn}}'
+AWS_SES_CONTACT: !Sub '{{resolve:ssm:/hei-admin-api/${Env}/ses/contact}}'

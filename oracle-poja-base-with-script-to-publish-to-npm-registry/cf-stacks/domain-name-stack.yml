@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: poja-base-with-script-to-publish-to-npm-registry - Domain name
+
+Parameters:
+  DomainName:
+    Type: String
+  CertificateArn:
+    Type: String
+    Description: Arn of the ACM (certificate) of the domain name **Required**
+  ApiTargetId:
+    Type: String
+  ApiStage:
+    Type: String
+
+Resources:
+  CustomDomainName:
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties:
+      DomainName: !Ref DomainName
+      DomainNameConfigurations:
+        - CertificateArn: !Ref CertificateArn
+          EndpointType: REGIONAL
+          SecurityPolicy: TLS_1_2
+
+  ApiMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      DomainName: !Ref CustomDomainName
+      ApiId: !Ref ApiId
+      Stage: !Ref ApiStage

@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: poja-base-with-script-to-publish-to-npm-registry - Event
+
+Parameters:
+  Env:
+    Type: String
+
+Resources:
+  MailboxQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Join ['' , [!Ref Env , -poja-base-with-script-to-publish-to-npm-registry]]
+      VisibilityTimeout: 601
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeadLetterQueue.Arn
+        maxReceiveCount: 5
+      SqsManagedSseEnabled: false
+
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName:  !Join ['' , [!Ref Env , -poja-base-with-script-to-publish-to-npm-registry-dl]]
+      SqsManagedSseEnabled: false
+
+  MailboxQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref MailboxQueue
+      PolicyDocument:
+        Version: "2008-10-17"
+        Id: "MailboxQueue_Policy"
+        Statement:
+          - Action:
+              - "SQS:*"
+            Effect: "Allow"
+            Resource: !GetAtt MailboxQueue.Arn
+            Principal:
+              AWS:
+                - !Sub arn:aws:iam::${AWS::AccountId}:root
+          - Action:
+              - "SQS:SendMessage"
+            Effect: "Allow"
+            Resource: !GetAtt MailboxQueue.Arn
+            Principal:
+              Service:
+                - "events.amazonaws.com"
+            Condition:
+              ArnEquals:
+                AWS:SourceArn: !GetAtt EventBridgeRule.Arn
+
+  DeadLetterQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref DeadLetterQueue
+      PolicyDocument:
+        Version: "2008-10-17"
+        Id: "DeadLetterQueue_Policy"
+        Statement:
+          - Action:
+              - "SQS:*"
+            Effect: "Allow"
+            Resource: !GetAtt DeadLetterQueue.Arn
+            Principal:
+              AWS:
+                - !Sub arn:aws:iam::${AWS::AccountId}:root
+
+  MailboxQueueSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join ['' , [/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /sqs/mailbox-queue-url]]
+      Type: String
+      Value: !Ref MailboxQueue
+
+  MailboxQueueSSMArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join ['' , [/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /sqs/mailbox-queue-arn]]
+      Type: String
+      Value: !GetAtt MailboxQueue.Arn
+
+  DeadLetterQueueSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join ['' , [/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /sqs/dead-letter-queue-url]]
+      Type: String
+      Value: !Ref DeadLetterQueue
+
+  EventBridgeBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry]]
+
+  EventBridgeArchive:
+    Type: AWS::Events::Archive
+    Properties:
+      ArchiveName: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry, -archive]]
+      SourceArn: !GetAtt EventBridgeBus.Arn
+
+  EventBridgeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry, -from-api-to-api]]
+      EventBusName: !GetAtt EventBridgeBus.Name
+      EventPattern:
+        source:
+          - com.company.base
+      Targets:
+        - Arn: !GetAtt MailboxQueue.Arn
+          Id: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry, -api-mailbox]]
+
+  EventBridgeBusNameSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join ['',[/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /eventbridge/bus-name]]
+      Type: String
+      Value: !GetAtt EventBridgeBus.Name
+
+Outputs:
+  MailboxQueueURL:
+    Value: !Ref MailboxQueueSSM
+  MailboxQueueArn:
+    Value: !Ref MailboxQueueSSMArn
+  DeadLetterQueueURL:
+    Value: !Ref DeadLetterQueueSSM
+  EventBridgeBusName:
+    Value: !Ref EventBridgeBusNameSSM

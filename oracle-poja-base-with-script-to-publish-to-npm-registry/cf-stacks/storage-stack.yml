@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: poja-base-with-script-to-publish-to-npm-registry - Storage
+
+Parameters:
+  Env:
+    Type: String
+  DBName:
+    Type: String
+    Default: poja-base-with-script-to-publish-to-npm-registry-rds
+  ProdDbClusterTimeout:
+    Type: Number
+
+Conditions:
+  IsProdEnv: !Equals
+    - !Ref Env
+    - 'prod'
+
+Resources:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: !Join [ '', [ Subnet group for poja-base-with-script-to-publish-to-npm-registry , !Ref Env ] ]
+      DBSubnetGroupName: !Join [ '', [ poja-base-with-script-to-publish-to-npm-registry-, !Ref Env, -subnet-group ] ]
+      SubnetIds:
+        - !Sub '{{resolve:ssm:/poja/subnet/private1/id}}'
+        - !Sub '{{resolve:ssm:/poja/subnet/private2/id}}'
+
+  DatabaseCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      BackupRetentionPeriod: 35
+      DatabaseName: !Join [ '', !Split [ '-', !Ref DBName ] ]
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      DeletionProtection: true
+      Engine: aurora-postgresql
+      EngineMode: serverless
+      EngineVersion: 13.9 #Only postgresql version 13.9 and 11.9 supports Aurora serverless v1
+      MasterUsername: !Sub '{{resolve:ssm:/poja-base-with-script-to-publish-to-npm-registry/${Env}/db/username}}'
+      MasterUserPassword: !Sub '{{resolve:ssm:/poja-base-with-script-to-publish-to-npm-registry/${Env}/db/password}}'
+      VpcSecurityGroupIds:
+        - !Sub '{{resolve:ssm:/poja/sg/id}}'
+      ScalingConfiguration:
+        SecondsUntilAutoPause:
+          !If [ IsProdEnv,  !Ref ProdDbClusterTimeout, 300 ]
+
+
+  DatabaseClusterSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join [ '', [ /poja-base-with-script-to-publish-to-npm-registry/, !Ref Env, /db/url ] ]
+      Type: String
+      Value:
+        Fn::Join:
+          - ''
+          - - jdbc:postgresql://
+            - Fn::GetAtt:
+                - DatabaseCluster
+                - Endpoint.Address
+            - ':'
+            - Fn::GetAtt:
+                - DatabaseCluster
+                - Endpoint.Port
+            - '/'
+            - !Join [ '', !Split [ '-', !Ref DBName ] ]
+
+  DatabaseClusterIdentifierSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join [ '', [ /poja-base-with-script-to-publish-to-npm-registry/, !Ref Env, /db/identifier ] ]
+      Type: String
+      Value: !GetAtt DatabaseCluster.Endpoint.Address
+
+Outputs:
+  DatabaseClusterSSM:
+    Value: !GetAtt DatabaseClusterSSM.Value
