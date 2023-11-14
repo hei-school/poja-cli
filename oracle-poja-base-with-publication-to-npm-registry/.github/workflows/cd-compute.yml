@@ -1,0 +1,49 @@
+name: CD compute
+
+on:
+  push:
+    branches:
+      - 'prod'
+      - 'preprod'
+
+  workflow_dispatch:
+
+  workflow_call:
+
+jobs:
+  deploy-api:
+    if: ${{ github.ref_name == 'prod' || github.ref_name == 'preprod' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      AWS_REGION: eu-west-3
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Configure preprod AWS credentials
+        if: ${{ github.ref_name != 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-access-key-id: ${{ secrets.PREPROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PREPROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Configure prod AWS credentials
+        if: ${{ github.ref_name == 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - run: sam build
+
+      - name: Deploy application
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${{ github.ref_name }}-compute-poja-base-with-script-to-publish-to-npm-registry --capabilities CAPABILITY_IAM --parameter-overrides Env=${{ github.ref_name }} --resolve-s3

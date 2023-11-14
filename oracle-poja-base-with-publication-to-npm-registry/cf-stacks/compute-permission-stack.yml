@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: poja-base-with-script-to-publish-to-npm-registry - Compute permission
+
+Parameters:
+  Env:
+    Type: String
+
+Resources:
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join [ '', [ poja-base-with-script-to-publish-to-npm-registry-, !Ref Env, -ExecutionRole ] ]
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+
+  ExecutionRoleArnSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join [ '',[ /poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /execution/role-arn ] ]
+      Type: String
+      Value: !GetAtt ExecutionRole.Arn

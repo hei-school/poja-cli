@@ -67,6 +67,28 @@ def test_base_with_custom_java_env_vars():
     assert is_dir_superset_of("oracle-poja-base-with-java-env-vars", output_dir)
 
 
+def test_base_with_script_to_publish_to_npm_registry():
+    output_dir = "test-poja-base-with-publication-to-npm-registry"
+    poja.gen(
+        "poja-base-with-publication-to-npm-registry",
+        region="eu-west-3",
+        ssm_sg_id="/poja/sg/id",
+        ssm_subnet1_id="/poja/subnet/private1/id",
+        ssm_subnet2_id="/poja/subnet/private2/id",
+        package_full_name="com.company.base",
+        with_postgres="false",
+        custom_java_env_vars="custom-java-env-vars.txt",
+        output_dir=output_dir,
+        jacoco_min_coverage="0.9",
+        with_publish_to_npm_registry="true",
+        ts_client_default_openapi_server_url="http://localhost",
+        ts_client_api_url_env_var_name="CLIENT_API_URL",
+    )
+    assert is_dir_superset_of(
+        "oracle-poja-base-with-publication-to-npm-registry", output_dir
+    )
+
+
 def is_dir_superset_of(superset_dir, subset_dir):
     compared = dircmp(superset_dir, subset_dir)
     print(

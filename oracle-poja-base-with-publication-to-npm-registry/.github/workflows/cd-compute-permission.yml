@@ -1,0 +1,51 @@
+name: CD compute permission
+
+on:
+  push:
+    branches:
+      - 'prod'
+      - 'preprod'
+
+  workflow_dispatch:
+
+jobs:
+  cd-event:
+    if: github.ref_name == 'prod' || github.ref_name == 'preprod'
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 20
+
+    env:
+      AWS_REGION: eu-west-3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      - name: Configure preprod AWS credentials
+        if: ${{ github.ref_name == 'preprod' }}
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-access-key-id: ${{ secrets.PREPROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PREPROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Configure prod AWS credentials
+        if: ${{ github.ref_name == 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy permission stack
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: ${{ github.ref_name }}-permission-poja-base-with-script-to-publish-to-npm-registry
+          template: cf-stacks/compute-permission-stack.yml
+          tags: "[ { \"Key\": \"app\", \"Value\": \"poja-base-with-script-to-publish-to-npm-registry\" }, { \"Key\": \"env\", \"Value\": \"${{ github.ref_name }}\" } ]"
+          capabilities: CAPABILITY_NAMED_IAM
+          no-fail-on-empty-changeset: "1"
+          parameter-overrides:
+            "Env=${{ github.ref_name }}"

@@ -7,7 +7,7 @@ import yaml
 import os
 
 GIT_URL = "https://github.com/hei-school/poja"
-GIT_TAG_OR_COMMIT = "0dde40b"
+GIT_TAG_OR_COMMIT = "8e1a1a0"
 
 DEFAULT_GROUP_NAME = "school.hei"
 DEFAULT_PACKAGE_FULL_NAME = DEFAULT_GROUP_NAME + ".poja"
@@ -25,6 +25,9 @@ def gen(
     with_postgres="true",
     output_dir=None,
     jacoco_min_coverage="0.8",
+    with_publish_to_npm_registry="false",
+    ts_client_default_openapi_server_url="",
+    ts_client_api_url_env_var_name="",
 ):
     if output_dir is None:
         output_dir = app_name
@@ -74,6 +77,23 @@ def gen(
     sed.find_replace(
         temp_dir, "<?jacoco-min-coverage>", jacoco_min_coverage + "", exclude
     )
+    if with_publish_to_npm_registry == "true":
+        print_normal("ts_client_default_openapi_server_url")
+        sed.find_replace(
+            temp_dir,
+            "<?ts-client-default-openapi-server-url>",
+            ts_client_default_openapi_server_url,
+            exclude,
+        )
+        print_normal("ts_client_api_url_env_var_name")
+        sed.find_replace(
+            temp_dir,
+            "<?ts-client-api-url-env-var-name>",
+            ts_client_api_url_env_var_name,
+            exclude,
+        )
+    else:
+        os.remove("%s/.github/workflows/publish-client.yml" % temp_dir)
 
     print_title("Save conf...")
     save_conf(
@@ -88,6 +108,8 @@ def gen(
         java_env_vars,
         with_postgres,
         jacoco_min_coverage,
+        ts_client_default_openapi_server_url,
+        ts_client_api_url_env_var_name,
     )
     print_normal("poja.yml")
 
@@ -123,6 +145,8 @@ def save_conf(
     custom_java_env_vars,
     with_postgres,
     jacoco_min_coverage,
+    ts_client_default_openapi_server_url,
+    ts_client_api_url_env_var_name,
 ):
     custom_java_deps_filename = "poja-custom-java-deps.txt"
     custom_java_env_vars_filename = "poja-custom-java-env-vars.txt"
@@ -138,6 +162,8 @@ def save_conf(
         "custom_java_env_vars": custom_java_env_vars_filename,
         "with_postgres": with_postgres,
         "jacoco-min-coverage": jacoco_min_coverage,
+        "ts_client_default_openapi_server_url": ts_client_default_openapi_server_url,
+        "ts_client_api_url_env_var_name": ts_client_api_url_env_var_name,
     }
     with open(temp_dir + "/poja.yml", "w") as conf_file:
         yaml.dump(conf, conf_file)

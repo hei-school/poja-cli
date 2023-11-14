@@ -1,0 +1,59 @@
+name: Infra health check (prod)
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - 'prod'
+  pull_request:
+    branches:
+      - 'prod'
+
+env:
+  AWS_REGION: eu-west-3
+
+jobs:
+  check-sync-stack:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Configure prod AWS credentials
+        if: ${{ github.ref_name == 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: GET /dummy-table
+        run: |
+          export API_URL_SSM="`aws ssm get-parameter --name /poja-base-with-script-to-publish-to-npm-registry/${{ github.ref_name }}/api/url`"
+          sudo apt-get install jq
+          export API_URL=`echo $API_URL_SSM | jq -r '.Parameter.Value'`
+          curl --fail "$API_URL"/dummy-table
+
+  check-async-stack:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Configure prod AWS credentials
+        if: ${{ github.ref_name == 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: GET /uuid-created
+        run: |
+          export API_URL_SSM="`aws ssm get-parameter --name /poja-base-with-script-to-publish-to-npm-registry/${{ github.ref_name }}/api/url`"
+          sudo apt-get install jq
+          export API_URL=`echo $API_URL_SSM | jq -r '.Parameter.Value'`
+          curl --max-time 60 --fail "$API_URL"/uuid-created
