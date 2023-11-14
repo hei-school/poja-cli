@@ -19,6 +19,8 @@ def gen(
     ssm_sg_id,
     ssm_subnet1_id,
     ssm_subnet2_id,
+    ts_client_default_openapi_server_url,
+    ts_client_api_url_env_var_name,
     package_full_name=DEFAULT_PACKAGE_FULL_NAME,
     custom_java_deps=None,
     custom_java_env_vars=None,
@@ -74,6 +76,10 @@ def gen(
     sed.find_replace(
         temp_dir, "<?jacoco-min-coverage>", jacoco_min_coverage + "", exclude
     )
+    print_normal("ts_client_default_openapi_server_url")
+    sed.find_replace(temp_dir, "<?ts-client-default-openapi-server-url>", ts_client_default_openapi_server_url, exclude)
+    print_normal("ts_client_api_url_env_var_name")
+    sed.find_replace(temp_dir, "<?ts-client-api-url-env-var-name>", ts_client_api_url_env_var_name, exclude)
 
     print_title("Save conf...")
     save_conf(
@@ -88,6 +94,8 @@ def gen(
         java_env_vars,
         with_postgres,
         jacoco_min_coverage,
+        ts_client_default_openapi_server_url,
+        ts_client_api_url_env_var_name
     )
     print_normal("poja.yml")
 
@@ -123,6 +131,8 @@ def save_conf(
     custom_java_env_vars,
     with_postgres,
     jacoco_min_coverage,
+    ts_client_default_openapi_server_url,
+    ts_client_api_url_env_var_name,
 ):
     custom_java_deps_filename = "poja-custom-java-deps.txt"
     custom_java_env_vars_filename = "poja-custom-java-env-vars.txt"
@@ -138,6 +148,9 @@ def save_conf(
         "custom_java_env_vars": custom_java_env_vars_filename,
         "with_postgres": with_postgres,
         "jacoco-min-coverage": jacoco_min_coverage,
+        "ts_client_default_openapi_server_url": ts_client_default_openapi_server_url,
+        "ts_client_api_url_env_var_name": ts_client_api_url_env_var_name,
+
     }
     with open(temp_dir + "/poja.yml", "w") as conf_file:
         yaml.dump(conf, conf_file)
