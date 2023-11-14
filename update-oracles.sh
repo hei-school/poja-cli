@@ -14,5 +14,5 @@ cp -r test-poja-base-without-postgres oracle-poja-base-without-postgres
 rm -rf oracle-poja-base-with-java-env-vars
 cp -r test-poja-base-with-java-env-vars oracle-poja-base-with-java-env-vars
 
-rm -rf oracle-poja-base-with-script-to-publish-to-npm-registry
-cp -r test-poja-base-with-script-to-publish-to-npm-registry oracle-poja-base-with-script-to-publish-to-npm-registry
+rm -rf oracle-poja-base-with-publication-to-npm-registry
+cp -r test-poja-base-with-publication-to-npm-registry oracle-poja-base-with-publication-to-npm-registry

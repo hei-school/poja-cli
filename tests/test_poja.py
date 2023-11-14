@@ -68,9 +68,9 @@ def test_base_with_custom_java_env_vars():
 
 
 def test_base_with_script_to_publish_to_npm_registry():
-    output_dir = "test-poja-base-with-script-to-publish-to-npm-registry"
+    output_dir = "test-poja-base-with-publication-to-npm-registry"
     poja.gen(
-        "poja-base-with-script-to-publish-to-npm-registry",
+        "poja-base-with-publication-to-npm-registry",
         region="eu-west-3",
         ssm_sg_id="/poja/sg/id",
         ssm_subnet1_id="/poja/subnet/private1/id",
@@ -80,11 +80,11 @@ def test_base_with_script_to_publish_to_npm_registry():
         custom_java_env_vars="custom-java-env-vars.txt",
         output_dir=output_dir,
         jacoco_min_coverage="0.9",
-        with_publish_to_npm_registry_script="true",
+        with_publish_to_npm_registry="true",
         ts_client_default_openapi_server_url="http://localhost",
-        ts_client_api_url_env_var_name="URL_ENV_VAR"
+        ts_client_api_url_env_var_name="CLIENT_API_URL"
     )
-    assert is_dir_superset_of("oracle-poja-base-with-script-to-publish-to-npm-registry", output_dir)
+    assert is_dir_superset_of("oracle-poja-base-with-publication-to-npm-registry", output_dir)
 
 
 def is_dir_superset_of(superset_dir, subset_dir):

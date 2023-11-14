@@ -25,7 +25,7 @@ def gen(
     with_postgres="true",
     output_dir=None,
     jacoco_min_coverage="0.8",
-    with_publish_to_npm_registry_script="false",
+    with_publish_to_npm_registry="false",
     ts_client_default_openapi_server_url="",
     ts_client_api_url_env_var_name="",
 ):
@@ -77,7 +77,7 @@ def gen(
     sed.find_replace(
         temp_dir, "<?jacoco-min-coverage>", jacoco_min_coverage + "", exclude
     )
-    if with_publish_to_npm_registry_script == "true":
+    if with_publish_to_npm_registry == "true":
         print_normal("ts_client_default_openapi_server_url")
         sed.find_replace(temp_dir, "<?ts-client-default-openapi-server-url>", ts_client_default_openapi_server_url,
                          exclude)
