@@ -7,7 +7,7 @@ import yaml
 import os
 
 GIT_URL = "https://github.com/hei-school/poja"
-GIT_TAG_OR_COMMIT = "0dde40b"
+GIT_TAG_OR_COMMIT = "8e1a1a0"
 
 DEFAULT_GROUP_NAME = "school.hei"
 DEFAULT_PACKAGE_FULL_NAME = DEFAULT_GROUP_NAME + ".poja"
@@ -19,14 +19,15 @@ def gen(
     ssm_sg_id,
     ssm_subnet1_id,
     ssm_subnet2_id,
-    ts_client_default_openapi_server_url,
-    ts_client_api_url_env_var_name,
     package_full_name=DEFAULT_PACKAGE_FULL_NAME,
     custom_java_deps=None,
     custom_java_env_vars=None,
     with_postgres="true",
     output_dir=None,
     jacoco_min_coverage="0.8",
+    with_publish_to_npm_registry_script="false",
+    ts_client_default_openapi_server_url="",
+    ts_client_api_url_env_var_name="",
 ):
     if output_dir is None:
         output_dir = app_name
@@ -76,10 +77,14 @@ def gen(
     sed.find_replace(
         temp_dir, "<?jacoco-min-coverage>", jacoco_min_coverage + "", exclude
     )
-    print_normal("ts_client_default_openapi_server_url")
-    sed.find_replace(temp_dir, "<?ts-client-default-openapi-server-url>", ts_client_default_openapi_server_url, exclude)
-    print_normal("ts_client_api_url_env_var_name")
-    sed.find_replace(temp_dir, "<?ts-client-api-url-env-var-name>", ts_client_api_url_env_var_name, exclude)
+    if with_publish_to_npm_registry_script == "true":
+        print_normal("ts_client_default_openapi_server_url")
+        sed.find_replace(temp_dir, "<?ts-client-default-openapi-server-url>", ts_client_default_openapi_server_url,
+                         exclude)
+        print_normal("ts_client_api_url_env_var_name")
+        sed.find_replace(temp_dir, "<?ts-client-api-url-env-var-name>", ts_client_api_url_env_var_name, exclude)
+    else:
+        os.remove("%s/.github/workflows/publish-client.yml" % temp_dir)
 
     print_title("Save conf...")
     save_conf(
