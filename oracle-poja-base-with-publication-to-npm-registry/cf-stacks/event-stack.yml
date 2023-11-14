@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: poja-base-with-script-to-publish-to-npm-registry - Event
+Description: poja-base-with-publication-to-npm-registry - Event
 
 Parameters:
   Env:
@@ -9,7 +9,7 @@ Resources:
   MailboxQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Join ['' , [!Ref Env , -poja-base-with-script-to-publish-to-npm-registry]]
+      QueueName: !Join ['' , [!Ref Env , -poja-base-with-publication-to-npm-registry]]
       VisibilityTimeout: 601
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DeadLetterQueue.Arn
@@ -19,7 +19,7 @@ Resources:
   DeadLetterQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName:  !Join ['' , [!Ref Env , -poja-base-with-script-to-publish-to-npm-registry-dl]]
+      QueueName:  !Join ['' , [!Ref Env , -poja-base-with-publication-to-npm-registry-dl]]
       SqsManagedSseEnabled: false
 
   MailboxQueuePolicy:
@@ -69,51 +69,51 @@ Resources:
   MailboxQueueSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join ['' , [/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /sqs/mailbox-queue-url]]
+      Name: !Join ['' , [/poja-base-with-publication-to-npm-registry/ , !Ref Env , /sqs/mailbox-queue-url]]
       Type: String
       Value: !Ref MailboxQueue
 
   MailboxQueueSSMArn:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join ['' , [/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /sqs/mailbox-queue-arn]]
+      Name: !Join ['' , [/poja-base-with-publication-to-npm-registry/ , !Ref Env , /sqs/mailbox-queue-arn]]
       Type: String
       Value: !GetAtt MailboxQueue.Arn
 
   DeadLetterQueueSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join ['' , [/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /sqs/dead-letter-queue-url]]
+      Name: !Join ['' , [/poja-base-with-publication-to-npm-registry/ , !Ref Env , /sqs/dead-letter-queue-url]]
       Type: String
       Value: !Ref DeadLetterQueue
 
   EventBridgeBus:
     Type: AWS::Events::EventBus
     Properties:
-      Name: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry]]
+      Name: !Join ['', [!Ref Env, -poja-base-with-publication-to-npm-registry]]
 
   EventBridgeArchive:
     Type: AWS::Events::Archive
     Properties:
-      ArchiveName: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry, -archive]]
+      ArchiveName: !Join ['', [!Ref Env, -poja-base-with-publication-to-npm-registry, -archive]]
       SourceArn: !GetAtt EventBridgeBus.Arn
 
   EventBridgeRule:
     Type: AWS::Events::Rule
     Properties:
-      Name: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry, -from-api-to-api]]
+      Name: !Join ['', [!Ref Env, -poja-base-with-publication-to-npm-registry, -from-api-to-api]]
       EventBusName: !GetAtt EventBridgeBus.Name
       EventPattern:
         source:
           - com.company.base
       Targets:
         - Arn: !GetAtt MailboxQueue.Arn
-          Id: !Join ['', [!Ref Env, -poja-base-with-script-to-publish-to-npm-registry, -api-mailbox]]
+          Id: !Join ['', [!Ref Env, -poja-base-with-publication-to-npm-registry, -api-mailbox]]
 
   EventBridgeBusNameSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join ['',[/poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /eventbridge/bus-name]]
+      Name: !Join ['',[/poja-base-with-publication-to-npm-registry/ , !Ref Env , /eventbridge/bus-name]]
       Type: String
       Value: !GetAtt EventBridgeBus.Name
 

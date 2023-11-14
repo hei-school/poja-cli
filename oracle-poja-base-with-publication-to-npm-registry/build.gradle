@@ -56,7 +56,7 @@ task generateJavaClient(type: GenerateTask) {
     library = "native"
 
     groupId = 'com.company'
-    id = 'poja-base-with-script-to-publish-to-npm-registry-gen'
+    id = 'poja-base-with-publication-to-npm-registry-gen'
     skipValidateSpec = false
     logToStderr = true
     generateAliasAsModel = false

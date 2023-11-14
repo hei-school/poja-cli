@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: poja-base-with-script-to-publish-to-npm-registry - Storage
+Description: poja-base-with-publication-to-npm-registry - Storage
 
 Parameters:
   Env:
     Type: String
   DBName:
     Type: String
-    Default: poja-base-with-script-to-publish-to-npm-registry-rds
+    Default: poja-base-with-publication-to-npm-registry-rds
   ProdDbClusterTimeout:
     Type: Number
 
@@ -19,8 +19,8 @@ Resources:
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
-      DBSubnetGroupDescription: !Join [ '', [ Subnet group for poja-base-with-script-to-publish-to-npm-registry , !Ref Env ] ]
-      DBSubnetGroupName: !Join [ '', [ poja-base-with-script-to-publish-to-npm-registry-, !Ref Env, -subnet-group ] ]
+      DBSubnetGroupDescription: !Join [ '', [ Subnet group for poja-base-with-publication-to-npm-registry , !Ref Env ] ]
+      DBSubnetGroupName: !Join [ '', [ poja-base-with-publication-to-npm-registry-, !Ref Env, -subnet-group ] ]
       SubnetIds:
         - !Sub '{{resolve:ssm:/poja/subnet/private1/id}}'
         - !Sub '{{resolve:ssm:/poja/subnet/private2/id}}'
@@ -35,8 +35,8 @@ Resources:
       Engine: aurora-postgresql
       EngineMode: serverless
       EngineVersion: 13.9 #Only postgresql version 13.9 and 11.9 supports Aurora serverless v1
-      MasterUsername: !Sub '{{resolve:ssm:/poja-base-with-script-to-publish-to-npm-registry/${Env}/db/username}}'
-      MasterUserPassword: !Sub '{{resolve:ssm:/poja-base-with-script-to-publish-to-npm-registry/${Env}/db/password}}'
+      MasterUsername: !Sub '{{resolve:ssm:/poja-base-with-publication-to-npm-registry/${Env}/db/username}}'
+      MasterUserPassword: !Sub '{{resolve:ssm:/poja-base-with-publication-to-npm-registry/${Env}/db/password}}'
       VpcSecurityGroupIds:
         - !Sub '{{resolve:ssm:/poja/sg/id}}'
       ScalingConfiguration:
@@ -47,7 +47,7 @@ Resources:
   DatabaseClusterSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join [ '', [ /poja-base-with-script-to-publish-to-npm-registry/, !Ref Env, /db/url ] ]
+      Name: !Join [ '', [ /poja-base-with-publication-to-npm-registry/, !Ref Env, /db/url ] ]
       Type: String
       Value:
         Fn::Join:
@@ -66,7 +66,7 @@ Resources:
   DatabaseClusterIdentifierSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join [ '', [ /poja-base-with-script-to-publish-to-npm-registry/, !Ref Env, /db/identifier ] ]
+      Name: !Join [ '', [ /poja-base-with-publication-to-npm-registry/, !Ref Env, /db/identifier ] ]
       Type: String
       Value: !GetAtt DatabaseCluster.Endpoint.Address
 

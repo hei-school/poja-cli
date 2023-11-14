@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: poja-base-with-script-to-publish-to-npm-registry - Compute permission
+Description: poja-base-with-publication-to-npm-registry - Compute permission
 
 Parameters:
   Env:
@@ -9,7 +9,7 @@ Resources:
   ExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join [ '', [ poja-base-with-script-to-publish-to-npm-registry-, !Ref Env, -ExecutionRole ] ]
+      RoleName: !Join [ '', [ poja-base-with-publication-to-npm-registry-, !Ref Env, -ExecutionRole ] ]
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
@@ -22,6 +22,6 @@ Resources:
   ExecutionRoleArnSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join [ '',[ /poja-base-with-script-to-publish-to-npm-registry/ , !Ref Env , /execution/role-arn ] ]
+      Name: !Join [ '',[ /poja-base-with-publication-to-npm-registry/ , !Ref Env , /execution/role-arn ] ]
       Type: String
       Value: !GetAtt ExecutionRole.Arn

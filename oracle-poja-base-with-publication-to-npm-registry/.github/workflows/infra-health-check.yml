@@ -31,7 +31,7 @@ jobs:
 
       - name: GET /dummy-table
         run: |
-          export API_URL_SSM="`aws ssm get-parameter --name /poja-base-with-script-to-publish-to-npm-registry/${{ github.ref_name }}/api/url`"
+          export API_URL_SSM="`aws ssm get-parameter --name /poja-base-with-publication-to-npm-registry/${{ github.ref_name }}/api/url`"
           sudo apt-get install jq
           export API_URL=`echo $API_URL_SSM | jq -r '.Parameter.Value'`
           curl --fail "$API_URL"/dummy-table
@@ -53,7 +53,7 @@ jobs:
 
       - name: GET /uuid-created
         run: |
-          export API_URL_SSM="`aws ssm get-parameter --name /poja-base-with-script-to-publish-to-npm-registry/${{ github.ref_name }}/api/url`"
+          export API_URL_SSM="`aws ssm get-parameter --name /poja-base-with-publication-to-npm-registry/${{ github.ref_name }}/api/url`"
           sudo apt-get install jq
           export API_URL=`echo $API_URL_SSM | jq -r '.Parameter.Value'`
           curl --max-time 60 --fail "$API_URL"/uuid-created

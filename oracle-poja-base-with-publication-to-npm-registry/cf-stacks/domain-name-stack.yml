@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: poja-base-with-script-to-publish-to-npm-registry - Domain name
+Description: poja-base-with-publication-to-npm-registry - Domain name
 
 Parameters:
   DomainName:

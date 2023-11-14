@@ -67,7 +67,7 @@ jobs:
       - name: Publish Typescript client
         run: |
           cd build/gen-ts/
-          sed -i "s/\"https:\/\/http://localhost\"/\(process.env.URL_ENV_VAR || \"\"\)/g" base.ts
+          sed -i "s/\"https:\/\/http://localhost\"/\(process.env.CLIENT_API_URL || \"\"\)/g" base.ts
           sed -i "s/\"dependencies\"/\"peerDependencies\"/g" package.json
           sed -i '11d' tsconfig.json && sed -i "s/\"es6\",/\"es6\"/g" tsconfig.json
           echo -e "\n*.ts\nnode_module\n!*.d.ts\n.idea\n.vscode\n.openapi-generator\n.openapi-generator-ignore\ngit_push.sh" >> .npmignore

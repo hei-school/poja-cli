@@ -1,0 +1,98 @@
+name: Release version
+
+on:
+  workflow_dispatch:
+
+  workflow_call:
+
+jobs:
+  release-version:
+    runs-on: ubuntu-latest
+
+    outputs:
+      semver: ${{ steps.output-semver.outputs.semver }}
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # secrets.GITHUB_TOKEN is not enough for releasing on protected branch
+          # Use a Personal Access Token from someone who has sufficient privileges
+          token: ${{ secrets.GH_TOKEN_FOR_CONVENTIONAL_CHANGELOG }}
+
+
+      #############################################################################
+      ####### DETERMINE NEXT VERSION AND BUILD WITH APPROPRIATE VERSION ###########
+      #############################################################################
+
+      # We will use conventional-changelog which only supports yaml, yml and toml version file
+      - name: From gradle.properties to version.yml
+        run: |
+          cp gradle.properties version.yml
+          sed -i 's/=/: /g' version.yml
+          git status
+
+      # conventional-ch increments the patch version even when
+      # it skipped commiting due to empty changelog. In such a case,
+      # we have to retrieve the old (unchanged) version using our own means.
+      # https://github.com/conventional-changelog/standard-version/issues/730
+
+      - name: Read old version file
+        id: read-old-version
+        uses: CumulusDS/get-yaml-paths-action@v0.1.0
+        with:
+          file: version.yml
+          version: version
+
+      - name: Conventional changelog
+        id: conventional-ch
+        uses: TriPSs/conventional-changelog-action@v3
+        with:
+          github-token: ${{ secrets.GH_TOKEN_FOR_CONVENTIONAL_CHANGELOG }}
+          git-message: 'release: {version}'
+          release-count: '10'
+          version-file: './version.yml'
+          version-path: 'version'
+          skip-on-empty: 'true'
+          skip-version-file: 'false'
+          skip-commit: 'false'
+
+      - name: Read new version file
+        id: read-new-version
+        uses: CumulusDS/get-yaml-paths-action@v0.1.0
+        with:
+          file: version.yml
+          version: version
+
+      - name: Put correct version into GITHUB_ENV
+        run: |
+          if ${{ steps.conventional-ch.outputs.skipped == 'false' }}; then
+            echo "semver=${{ steps.read-new-version.outputs.version }}" >> $GITHUB_ENV
+          else
+            echo "semver=${{ steps.read-old-version.outputs.version }}" >> $GITHUB_ENV
+          fi
+
+      - name: If version incremented then go from version.yml to gradle.properties
+        if: ${{ steps.conventional-ch.outputs.skipped == 'false' }}
+        run: |
+          cp version.yml gradle.properties
+          sed -i 's/: /=/g' gradle.properties
+          rm version.yml
+
+      - name: If version incremented then commit
+        if: ${{ steps.conventional-ch.outputs.skipped == 'false' }}
+        run: |
+          git rm version.yml
+          git add gradle.properties
+          git commit --amend --no-edit
+          git push -f
+          # Also update tag since commit was amended
+          git tag -d v${{ env.semver }}
+          git tag v${{ env.semver }}
+          git push --delete origin v${{ env.semver }}
+          git push --tags
+
+      - name: Output actual semver
+        id: output-semver
+        run: echo "semver=${{ steps.read-new-version.outputs.version }}" >> "$GITHUB_OUTPUT"
