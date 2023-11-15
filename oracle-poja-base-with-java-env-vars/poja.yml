@@ -1,5 +1,5 @@
 app_name: poja-base-with-java-env-vars
-cli_version: 3.0.2
+cli_version: 3.0.3
 custom_java_deps: poja-custom-java-deps.txt
 custom_java_env_vars: poja-custom-java-env-vars.txt
 jacoco-min-coverage: '0.9'
