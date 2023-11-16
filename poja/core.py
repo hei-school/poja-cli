@@ -139,7 +139,8 @@ def gen(
 
     print_title("Client generation...")
     print_normal("doc/api.yml")
-    os.system("mkdir -p %s/doc & touch %s/doc/api.yml" % (output_dir, output_dir))
+    os.system("mkdir -p %s/doc" % output_dir)
+    os.system("touch %s/doc/api.yml" % output_dir)
 
     print_title("... all done!")
 
