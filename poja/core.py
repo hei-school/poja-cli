@@ -128,6 +128,8 @@ def gen(
     os.remove(temp_dir + "/README.md")
     print_normal("application.properties")
     os.remove(temp_dir + "/src/main/resources/application.properties")
+    print_normal("gradle.properties")
+    os.remove(temp_dir + "/gradle.properties")
 
     print_title("Format...")
     os.system("cd %s && ./format.sh" % temp_dir)
