@@ -92,7 +92,3 @@ jobs:
           git tag v${{ env.semver }}
           git push --delete origin v${{ env.semver }}
           git push --tags
-
-      - name: Output actual semver
-        id: output-semver
-        run: echo "semver=${{ steps.read-new-version.outputs.version }}" >> "$GITHUB_OUTPUT"

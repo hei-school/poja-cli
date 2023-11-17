@@ -13,9 +13,6 @@ jobs:
 
     needs: release-version
 
-    env:
-      semver: ${{ needs.release-version.outputs.semver }}
-
     steps:
       ###############################################################
       ########## GENERATE AND PUBLISH TYPESCRIPT CLIENT #############
@@ -29,8 +26,14 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+      - name: Read gradle.properties file
+        id: extract_version
+        run: |
+          version=$(grep -oP 'version=\K[^ ]+' version.yml)
+          echo "::set-output name=version::$version"
+
       - name: Generate typescript client
-        run: ./gradlew generateTsClient -Pargs=${{ env.semver }}
+        run: ./gradlew generateTsClient -Pargs=${{ steps.extract_version.outputs.version }}
 
       - name: install-aws-cli
         uses: unfor19/install-aws-cli-action@v1.0.3
