@@ -87,6 +87,13 @@ Resources:
       Type: String
       Value: !Ref DeadLetterQueue
 
+  DeadLetterQueueArnSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join [ '' , [ /poja-base-with-java-env-vars/ , !Ref Env , /sqs/dead-letter-queue-arn ] ]
+      Type: String
+      Value: !GetAtt DeadLetterQueue.Arn
+
   EventBridgeBus:
     Type: AWS::Events::EventBus
     Properties:
@@ -117,6 +124,13 @@ Resources:
       Type: String
       Value: !GetAtt EventBridgeBus.Name
 
+  EventBridgeBusArnSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join [ '',[ /poja-base-with-java-env-vars/ , !Ref Env , /eventbridge/bus-arn ] ]
+      Type: String
+      Value: !GetAtt EventBridgeBus.Arn
+
 Outputs:
   MailboxQueueURL:
     Value: !Ref MailboxQueueSSM
@@ -124,5 +138,9 @@ Outputs:
     Value: !Ref MailboxQueueSSMArn
   DeadLetterQueueURL:
     Value: !Ref DeadLetterQueueSSM
+  DeadLetterQueueArn:
+    Value: !Ref DeadLetterQueueArnSSM
   EventBridgeBusName:
     Value: !Ref EventBridgeBusNameSSM
+  EventBridgeArnName:
+    Value: !Ref EventBridgeBusArnSSM
