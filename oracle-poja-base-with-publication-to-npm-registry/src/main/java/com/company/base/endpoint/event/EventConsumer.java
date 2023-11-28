@@ -38,7 +38,7 @@ public class EventConsumer implements Consumer<List<EventConsumer.Acknowledgeabl
         typedEvent = toTypedEvent(message);
       } catch (Exception e) {
         log.error(e.getMessage());
-        log.error("Message could not be unmarshalled, message : %s \n", message);
+        log.error("Message could not be unmarshalled, message : {} \n", message);
         continue;
       }
       AcknowledgeableTypedEvent acknowledgeableTypedEvent =
