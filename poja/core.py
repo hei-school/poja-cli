@@ -36,8 +36,8 @@ def gen(
     with_publish_to_npm_registry="false",
     ts_client_default_openapi_server_url="",
     ts_client_api_url_env_var_name="",
-    frontal_memory=1024,
-    worker_memory=2048,
+    frontal_memory=512,
+    worker_memory=1024,
     worker_batch=5,
 ):
     if output_dir is None:
