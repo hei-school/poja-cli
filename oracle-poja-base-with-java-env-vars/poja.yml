@@ -3,7 +3,7 @@ cli_version: 3.6.1
 custom_java_deps: poja-custom-java-deps.txt
 custom_java_env_vars: poja-custom-java-env-vars.txt
 custom_java_repositories: poja-custom-java-repositories.txt
-frontal_memory: 1024
+frontal_memory: 512
 jacoco-min-coverage: '0.9'
 package_full_name: com.company.base
 region: eu-west-3
@@ -17,4 +17,4 @@ with_own_vpc: 'true'
 with_postgres: 'false'
 with_swagger_ui: 'true'
 worker_batch: 5
-worker_memory: 2048
+worker_memory: 1024
