@@ -69,7 +69,7 @@ task generateTsClient(type: org.openapitools.generator.gradle.plugin.tasks.Gener
     ]
     additionalProperties = [
             enumPropertyNaming: "original",
-            npmName           : "poja-base-with-publication-to-npm-registry-Ts-client",
+            npmName           : "@poja-base-with-publication-to-npm-registry/typescript-client",
             npmVersion        : project.properties["args"] ?: "latest"
     ]
 }

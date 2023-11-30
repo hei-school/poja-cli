@@ -42,7 +42,7 @@ task generateTsClient(type: org.openapitools.generator.gradle.plugin.tasks.Gener
     ]
     additionalProperties = [
             enumPropertyNaming: "original",
-            npmName           : "<?app-name>-Ts-client",
+            npmName           : "@<?app-name>/typescript-client",
             npmVersion        : project.properties["args"] ?: "latest"
     ]
 }

@@ -69,7 +69,7 @@ task generateTsClient(type: org.openapitools.generator.gradle.plugin.tasks.Gener
     ]
     additionalProperties = [
             enumPropertyNaming: "original",
-            npmName           : "poja-base-with-java-env-vars-Ts-client",
+            npmName           : "@poja-base-with-java-env-vars/typescript-client",
             npmVersion        : project.properties["args"] ?: "latest"
     ]
 }
