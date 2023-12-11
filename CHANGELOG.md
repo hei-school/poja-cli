@@ -1,3 +1,12 @@
+# [4.2.0](https://github.com/hei-school/poja-cli/compare/v4.1.2...v4.2.0) (2023-12-11)
+
+
+### Features
+
+* mail package ([ee673d9](https://github.com/hei-school/poja-cli/commit/ee673d90979c36dd03b4c77bba5de2dd5d3edfaa))
+
+
+
 ## [4.1.2](https://github.com/hei-school/poja-cli/compare/v4.1.1...v4.1.2) (2023-12-08)
 
 
