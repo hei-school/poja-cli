@@ -7,6 +7,7 @@ frontal_memory: 512
 jacoco-min-coverage: '0.9'
 package_full_name: com.company.base
 region: eu-west-3
+ses_source: noreply@nowhere.com
 ssm_sg_id: null
 ssm_subnet1_id: null
 ssm_subnet2_id: null

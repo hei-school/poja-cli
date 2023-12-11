@@ -47,7 +47,7 @@ jobs:
           rootdir: ''
           workdir: ''
 
-      - uses: hei-school/aws-credentials-setter@v1.0.2
+      - uses: hei-school/aws-credentials-setter@v1.0.3
         with:
           secrets: ${{ toJSON(secrets) }}
           region: ${{ env.AWS_REGION }}

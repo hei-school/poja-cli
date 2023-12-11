@@ -17,8 +17,6 @@ import org.springframework.test.context.DynamicPropertySource;
 public class FacadeIT {
 
   private static final PostgresConf POSTGRES_CONF = new PostgresConf();
-  private static final EventConf EVENT_CONF = new EventConf();
-  private static final BucketConf BUCKET_CONF = new BucketConf();
 
   @BeforeAll
   static void beforeAll() {
@@ -34,8 +32,9 @@ public class FacadeIT {
   @DynamicPropertySource
   static void configureProperties(DynamicPropertyRegistry registry) {
     POSTGRES_CONF.configureProperties(registry);
-    EVENT_CONF.configureProperties(registry);
-    BUCKET_CONF.configureProperties(registry);
+    new EventConf().configureProperties(registry);
+    new BucketConf().configureProperties(registry);
+    new EmailConf().configureProperties(registry);
 
     try {
       var envConfClazz = Class.forName("com.company.base.conf.EnvConf");

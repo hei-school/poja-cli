@@ -11,7 +11,7 @@ import platform
 from pathlib import Path
 
 GIT_URL = "https://github.com/hei-school/poja"
-GIT_TAG_OR_COMMIT = "1fc6db8"
+GIT_TAG_OR_COMMIT = "e62789f"
 
 DEFAULT_GROUP_NAME = "school.hei"
 DEFAULT_PACKAGE_FULL_NAME = DEFAULT_GROUP_NAME + ".poja"
@@ -24,6 +24,7 @@ def gen(
     ssm_sg_id=None,
     ssm_subnet1_id=None,
     ssm_subnet2_id=None,
+    ses_source="noreply@nowhere.com",
     with_swagger_ui="false",
     package_full_name=DEFAULT_PACKAGE_FULL_NAME,
     custom_java_repositories=None,
@@ -55,6 +56,8 @@ def gen(
     exclude = "*.jar"
     print_normal("region")
     sed.find_replace(temp_dir, "<?aws-region>", region, exclude)
+    print_normal("ses_source")
+    sed.find_replace(temp_dir, "<?aws-ses-source>", ses_source, exclude)
 
     print_normal("frontal_memory")
     sed.find_replace(temp_dir, "<?frontal-memory>", str(frontal_memory), exclude)
@@ -137,6 +140,7 @@ def gen(
         ssm_sg_id,
         ssm_subnet1_id,
         ssm_subnet2_id,
+        ses_source,
         with_swagger_ui,
         package_full_name,
         java_repositories,
@@ -192,6 +196,7 @@ def save_conf(
     ssm_sg_id,
     ssm_subnet1_id,
     ssm_subnet2_id,
+    ses_source,
     with_swagger_ui,
     package_full_name,
     custom_java_repositories,
@@ -217,6 +222,7 @@ def save_conf(
         "ssm_sg_id": ssm_sg_id,
         "ssm_subnet1_id": ssm_subnet1_id,
         "ssm_subnet2_id": ssm_subnet2_id,
+        "ses_source": ses_source,
         "with_swagger_ui": with_swagger_ui,
         "package_full_name": package_full_name,
         "custom_java_repositories": custom_java_repositories_filename,

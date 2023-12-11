@@ -1,0 +1,54 @@
+name: Health check infra
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - 'prod'
+  pull_request:
+    branches:
+      - 'prod'
+
+env:
+  AWS_REGION: eu-west-3
+
+jobs:
+  check-sync-stack:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: hei-school/aws-credentials-setter@v1.0.3
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          region: ${{ env.AWS_REGION }}
+
+      - run: sh .shell/checkHealth.sh ${{ github.ref_name }} /health/db
+
+  check-async-stack:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: hei-school/aws-credentials-setter@v1.0.3
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          region: ${{ env.AWS_REGION }}
+
+      - run: sh .shell/checkHealth.sh ${{ github.ref_name }} /health/event
+
+  check-bucket:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: hei-school/aws-credentials-setter@v1.0.3
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          region: ${{ env.AWS_REGION }}
+
+      - run: sh .shell/checkHealth.sh ${{ github.ref_name }} /health/bucket

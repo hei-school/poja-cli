@@ -127,7 +127,13 @@ dependencies {
     implementation 'software.amazon.awssdk:sqs:2.21.40'
     implementation 'software.amazon.awssdk:eventbridge:2.21.40'
     implementation 'software.amazon.awssdk:s3:2.21.40'
+    implementation 'software.amazon.awssdk:ses:2.21.40'
     implementation 'software.amazon.awssdk:core:2.21.40'
+
+    implementation 'jakarta.mail:jakarta.mail-api:2.1.2'
+    implementation 'jakarta.activation:jakarta.activation-api:2.1.2'
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+    implementation 'com.sun.activation:jakarta.activation:2.0.1'
 
     implementation 'org.apache.tika:tika-core:1.18'
 

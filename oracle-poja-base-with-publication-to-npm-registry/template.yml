@@ -25,6 +25,7 @@ Globals:
         AWS_SQS_QUEUE_URL: !Sub '{{resolve:ssm:/poja-base-with-publication-to-npm-registry/${Env}/sqs/mailbox-queue-url}}'
         AWS_EVENTBRIDGE_BUS: !Sub '{{resolve:ssm:/poja-base-with-publication-to-npm-registry/${Env}/eventbridge/bus-name}}'
         AWS_S3_BUCKET: !Sub '{{resolve:ssm:/poja-base-with-publication-to-npm-registry/${Env}/s3/bucket-name}}'
+        AWS_SES_SOURCE: noreply@nowhere.com
         
         SENTRY_DSN: !Sub '{{resolve:ssm:/hei-admin-api/sentry/dsn}}'
         AWS_SES_CONTACT: !Sub '{{resolve:ssm:/hei-admin-api/${Env}/ses/contact}}'

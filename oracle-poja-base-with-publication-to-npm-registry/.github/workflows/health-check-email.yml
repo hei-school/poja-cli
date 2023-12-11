@@ -1,0 +1,24 @@
+name: Health check email
+on:
+  workflow_dispatch:
+    inputs:
+      to:
+        type: string
+        description: Email address
+        required: true
+env:
+  AWS_REGION: eu-west-3
+
+jobs:
+  check-email:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: hei-school/aws-credentials-setter@v1.0.3
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          region: ${{ env.AWS_REGION }}
+
+      - run: sh .shell/checkHealth.sh ${{ github.ref_name }} /health/email?to=${{ inputs.to }}

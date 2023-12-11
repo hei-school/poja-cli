@@ -25,6 +25,7 @@ Globals:
         AWS_SQS_QUEUE_URL: !Sub '{{resolve:ssm:/poja-base/${Env}/sqs/mailbox-queue-url}}'
         AWS_EVENTBRIDGE_BUS: !Sub '{{resolve:ssm:/poja-base/${Env}/eventbridge/bus-name}}'
         AWS_S3_BUCKET: !Sub '{{resolve:ssm:/poja-base/${Env}/s3/bucket-name}}'
+        AWS_SES_SOURCE: noreply@nowhere.com
         DATABASE_URL: !Sub '{{resolve:ssm:/poja-base/${Env}/db/url}}'
         DATABASE_USERNAME: !Sub '{{resolve:ssm:/poja-base/${Env}/db/username}}'
         DATABASE_PASSWORD: !Sub '{{resolve:ssm:/poja-base/${Env}/db/password}}'

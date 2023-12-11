@@ -12,6 +12,7 @@ def test_base():
         ssm_sg_id="/poja/sg/id",
         ssm_subnet1_id="/poja/subnet/private1/id",
         ssm_subnet2_id="/poja/subnet/private2/id",
+        ses_source="lou@hei.school",
         package_full_name="com.company.base",
         output_dir=output_dir,
         jacoco_min_coverage="0.5",
