@@ -18,12 +18,12 @@ class EventConsumerIT extends FacadeIT {
 
   @Autowired EventConsumer subject;
   @Autowired DummyUuidRepository dummyUuidRepository;
+  @Autowired ObjectMapper om;
 
   @Test
   void uuid_created_is_persisted() throws InterruptedException, JsonProcessingException {
     var uuid = randomUUID().toString();
     var uuidCreated = UuidCreated.builder().uuid(uuid).build();
-    var om = new ObjectMapper();
     var payloadReceived = om.readValue(om.writeValueAsString(uuidCreated), UuidCreated.class);
 
     subject.accept(
