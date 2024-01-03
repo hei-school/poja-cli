@@ -24,7 +24,9 @@ public class BucketConf {
     this.bucketName = bucketName;
     var region = Region.of(regionString);
     this.s3TransferManager =
-        S3TransferManager.builder().s3Client(S3AsyncClient.crtBuilder().build()).build();
+        S3TransferManager.builder()
+            .s3Client(S3AsyncClient.crtBuilder().region(region).build())
+            .build();
     this.s3Presigner = S3Presigner.builder().region(region).build();
   }
 }
