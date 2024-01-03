@@ -1,3 +1,12 @@
+# [9.1.0](https://github.com/hei-school/poja-cli/compare/v9.0.3...v9.1.0) (2024-01-03)
+
+
+### Features
+
+* specify SesClient region ([86a211b](https://github.com/hei-school/poja-cli/commit/86a211b54ac33eeb7fdb4d05f311a3b2dee57056))
+
+
+
 ## [9.0.3](https://github.com/hei-school/poja-cli/compare/v9.0.2...v9.0.3) (2023-12-29)
 
 
