@@ -38,6 +38,13 @@ Parameters:
     Type: String
 
 Resources:
+  FrontalServerlessRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      BinaryMediaTypes:
+        - "*~1*"
+
   FrontalFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -53,6 +60,8 @@ Resources:
           Properties:
             Path: /{proxy+}
             Method: ANY
+            RestApiId:
+              Ref: FrontalServerlessRestApi
 
   WorkerFunction:
     Type: AWS::Serverless::Function
@@ -88,7 +97,7 @@ Resources:
     Properties:
       Name: !Join [ '', [ /poja-sqlite/, !Ref Env, /api/url ] ]
       Type: String
-      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+      Value: !Sub "https://${FrontalServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
 
 Outputs:
   ApiUrl:
